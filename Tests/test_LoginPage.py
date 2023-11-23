@@ -6,6 +6,7 @@ from Config.config import TestData
 from Pages.LoginPage import LoginPage
 from Tests.test_base import BaseTest
 
+
 class Test_Login(BaseTest):
     def test_google_sso_button_visible(self):
         self.loginPage = LoginPage(self.driver)
@@ -32,7 +33,6 @@ class Test_Login(BaseTest):
         elif login_result == "workmode":
             print("WorkMode screen is present direct after Login Operation i.e without Force Login")
 
-
     def test_force_login(self):
         self.loginPage = LoginPage(self.driver)
         force_login_result = self.loginPage.do_force_login()
@@ -42,8 +42,8 @@ class Test_Login(BaseTest):
             print("After force login working mode screen not visible")
         else:
             print("Force Login window not appeared so test case is failed which is fine")
-        assert force_login_result in ('workmode'), "Either Force Login window not appeared OR after force login work mode not visible"
-
+        assert force_login_result in (
+            'workmode'), "Either Force Login window not appeared OR after force login work mode not visible"
 
     def test_work_mode_select(self):
         self.loginPage = LoginPage(self.driver)
@@ -52,9 +52,17 @@ class Test_Login(BaseTest):
 
     def test_voice_campaign_select(self):
         self.loginPage = LoginPage(self.driver)
-        self.loginPage.do_voice_campaign_select(TestData.CAMPAIGN_NAME)
+        campaign_select_result = self.loginPage.do_voice_campaign_select(TestData.CAMPAIGN_NAME)
+        assert campaign_select_result
 
     def test_extension_select(self):
         self.loginPage = LoginPage(self.driver)
-        self.loginPage.do_extension_select(TestData.AGENT_RON_EXTENSION,TestData.AGENT_RON_PHONE)
-        time.sleep(20)
+        extension_select_result = self.loginPage.do_extension_select(TestData.AGENT_RON_EXTENSION,
+                                                                     TestData.AGENT_RON_PHONE)
+        assert extension_select_result,"Extension select popup not came so webrtc"
+        time.sleep(5)
+
+    def test_logout(self):
+        self.loginPage = LoginPage(self.driver)
+        self.loginPage.do_logout()
+        time.sleep(10)

@@ -1,7 +1,8 @@
 from selenium.webdriver.common.by import By
 
 from Pages.BasePage import BasePage
-from Pages.WorkingModePage import WorkingModePage
+from Pages.HomePage import HomePage
+
 
 class LoginPage(BasePage):
 
@@ -21,10 +22,14 @@ class LoginPage(BasePage):
     WORK_MODE = (By.XPATH, "//input[@type='radio' and @name='workingMode']/following-sibling::label")
     #WORK_MODE = (By.XPATH, "//span[input[@type='radio' and @name='workingMode']]/label")
     WORK_MODE_SELECT_NEXT_BUTTON = (By.XPATH, "//button[span[text()='Next']]")
+    EXTENSION_SELECT_PAGE = (By.XPATH, "//h2[@automationid='extensionSelectionHeader']")
     EXTENSION_SEARCH = (By.XPATH, "//div[@automationid='extensionSelectionList']//span[@title='Select Extension']")
     EXTENSION_LIST = (By.XPATH, "//span[input[@type='search']]/following-sibling::span/ul[@role='tree']/li[@role='treeitem']")
     EXTENSION_PHONE_INPUT = (By.XPATH, "//input[@placeholder='Enter Number']")
     EXTENSION_SELECT_DONE_BUTTON = (By.XPATH, "//button[@automationid='extensionSaveBtn']")
+    AGENT_PREFRENCE_DROPDOWN = (By.XPATH, "//a[@automationid='userNameLink']")
+    SUPERVISOR_PREFRENCE_DROPDOWN = (By.XPATH, "//a[@automationid='supervisorPreferenceContainer']")
+    LOGOUT_BUTTON = (By.XPATH, "//a[span[text()='Logout']]")
 
 
     '''Constructor of the page class'''
@@ -93,11 +98,51 @@ class LoginPage(BasePage):
         self.do_click(self.VOICE_CAMPAIGN_INPUT)
         self.select_item_from_dropdown_list(self.VOICE_CAMPAIGN_LIST,campaign_name)
         self.do_click(self.CAMPAIGN_SELECT_NEXT_BUTTON)
+        if self.is_extension_select_page_displayed():
+            return True
+        elif HomePage(self.driver).is_call_details_tab_exist():
+            return True
+        else:
+            return False
+
+    def is_extension_select_page_displayed(self):
+        # Check for elements on the working mode page
+        return self.is_visible(self.EXTENSION_SELECT_PAGE)
 
     def do_extension_select(self, user_extension,user_phone):
-        self.do_click(self.EXTENSION_SEARCH)
-        self.select_item_from_dropdown_list(self.EXTENSION_LIST,user_extension)
-        self.do_send_keys(self.EXTENSION_PHONE_INPUT, user_phone)
-        self.do_click(self.EXTENSION_SELECT_DONE_BUTTON)
+        if self.is_extension_select_page_displayed():
+            self.do_click(self.EXTENSION_SEARCH)
+            self.select_item_from_dropdown_list(self.EXTENSION_LIST, user_extension)
+            self.do_send_keys(self.EXTENSION_PHONE_INPUT, user_phone)
+            self.do_click(self.EXTENSION_SELECT_DONE_BUTTON)
+            if HomePage(self.driver).is_call_details_tab_exist():
+                return True
+            else:
+                return False
+        else:
+            return False
 
-        
+    def do_logout(self):
+        self.do_click(self.AGENT_PREFRENCE_DROPDOWN)
+        self.do_click(self.LOGOUT_BUTTON)
+
+
+    def do_agent_complete_login(self, username, password,user_working_mode,campaign_name,user_extension,user_phone):
+        self.do_send_keys(self.USERNAME, username)
+        self.do_send_keys(self.PASSWORD, password)
+        self.do_click(self.LOGIN_BUTTON)
+        if self.is_force_login_page_displayed():
+            self.do_click(self.FORCE_LOGIN_OK_BUTTON)
+        if self.is_workmode_page_displayed():
+            self.select_item_from_dropdown_list(self.WORK_MODE, user_working_mode)
+            self.do_click(self.WORK_MODE_SELECT_NEXT_BUTTON)
+        if self.is_campaign_select_page_displayed():
+            self.do_click(self.VOICE_CAMPAIGN_INPUT)
+            self.select_item_from_dropdown_list(self.VOICE_CAMPAIGN_LIST, campaign_name)
+            self.do_click(self.CAMPAIGN_SELECT_NEXT_BUTTON)
+        if self.is_extension_select_page_displayed():
+            self.do_click(self.EXTENSION_SEARCH)
+            self.select_item_from_dropdown_list(self.EXTENSION_LIST, user_extension)
+            self.do_send_keys(self.EXTENSION_PHONE_INPUT, user_phone)
+            self.do_click(self.EXTENSION_SELECT_DONE_BUTTON)
+        return HomePage(self.driver)
