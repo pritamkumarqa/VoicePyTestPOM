@@ -1,3 +1,5 @@
+import time
+
 from Config.config import TestData
 from Pages.HomePage import HomePage
 from Pages.LoginPage import LoginPage
@@ -31,3 +33,47 @@ class Test_Home(BaseTest):
         homePage = HomePage(self.driver)
         assert homePage.is_call_details_tab_exist()
 
+    def test_agent_status_just_after_login(self):
+        homePage = HomePage(self.driver)
+        agent_status = homePage.get_agent_status()
+        print(f"agent status before status change is {agent_status} ")
+        assert agent_status == "Just Logged In"
+
+    def test_call_button_disabled(self):
+        homePage = HomePage(self.driver)
+        assert homePage.is_call_button_disabled()
+
+    def test_agent_status_change_to_available(self):
+        homePage = HomePage(self.driver)
+        homePage.do_agent_available()
+        agent_status = homePage.get_agent_status()
+        print(f"agent status after status change is {agent_status} ")
+        assert agent_status == "Available"
+
+    def test_agent_auto_call_status_on(self):
+        homePage = HomePage(self.driver)
+        assert homePage.is_agent_auto_call_on()
+
+    def test_manual_dial_phone(self):
+        homePage = HomePage(self.driver)
+        homePage.do_manual_dial_phone(TestData.CUSTOMER_PHONE)
+        # Wait for the call status to change to 'Connected'
+        homePage.wait_for_call_status('Connected')
+        # Now, you can assert that the call status is 'Connected'
+        call_status = homePage.get_call_status()
+        assert call_status == 'Connected'
+
+
+    def test_dispose_call(self):
+        homePage = HomePage(self.driver)
+        homePage.do_dispose_call(TestData.DISPOSITION_CLASS, TestData.DISPOSITION_CODE)
+        time.sleep(10)
+
+    def test_end_call(self):
+        homePage = HomePage(self.driver)
+        homePage.do_end_call()
+
+    def test_logout(self):
+        self.loginPage = LoginPage(self.driver)
+        self.loginPage.do_logout()
+        time.sleep(10)

@@ -100,6 +100,18 @@ class BasePage:
             logging.error(f"Frame with locator {by_locator} not available within {self.WAIT_TIME} seconds")
             return None
 
+    ''' This is generic method which will tell us if the provided arrtibute exists in the element locator or not'''
+    def is_attribute_present_in_element(self, by_locator, attribute):
+        try:
+            element = WebDriverWait(self.driver, self.WAIT_TIME).until(
+                EC.presence_of_element_located(by_locator)
+            )
+            # Check if the attribute exists in the element
+            return attribute in element.get_attribute('outerHTML')
+        except TimeoutException:
+            logging.error(f"Element with locator {by_locator} not visible within {self.WAIT_TIME} seconds")
+            return False
+
     def select_item_from_dropdown_list(self, by_locator, item_text):
         item_locator = None
         try:
@@ -119,4 +131,7 @@ class BasePage:
             logging.error(f"Element with locator {item_locator} not visible within {self.WAIT_TIME} seconds")
             print("I am exception here for", item_text)
 
-
+    def wait_for_element_text(self, by_locator, expected_text, timeout=30):
+        WebDriverWait(self.driver, timeout).until(
+            EC.text_to_be_present_in_element(by_locator, expected_text)
+        )

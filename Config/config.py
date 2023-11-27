@@ -10,10 +10,9 @@ class TestData:
     CAMPAIGN_NAME = "Cert_Outbound"
     AGENT_RON_EXTENSION = "7777_DefaultVR"
     AGENT_RON_PHONE = "9718374342"
-    #selected_working_mode = "WFO (Work From Office)"
     SELECTED_WORKING_MODE = "WFH (Work From Home)"
-    customer_phone="7838778572"
+    CUSTOMER_PHONE= "7838778572"
     # customer_name=fake.name()
     # customer_email=fake.email()
-    selected_disposition_class = "telecom.issues"
-    selected_disposition_code = "Already hungup"
+    DISPOSITION_CLASS = "telecom.issues"
+    DISPOSITION_CODE = "Already hungup"
