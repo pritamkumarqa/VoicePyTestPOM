@@ -1,13 +1,11 @@
 import time
 
-import pytest
-
 from Config.config import TestData
-from Pages.LoginPage import LoginPage
+from PageRepository.PageMethods.LoginPage import LoginPage
 from Tests.test_base import BaseTest
 
 
-class Test_Login(BaseTest):
+class TestLogin(BaseTest):
     def test_google_sso_button_visible(self):
         self.loginPage = LoginPage(self.driver)
         flag = self.loginPage.is_google_sso_button_exist()
@@ -23,7 +21,10 @@ class Test_Login(BaseTest):
         title = self.loginPage.get_title(TestData.LOGIN_PAGE_TITLE)
         assert title == TestData.LOGIN_PAGE_TITLE
 
-    def test_login(self):
+    # def test_login_valid_user_invalid_passwd(self):
+
+
+    def test_login_success(self):
         self.loginPage = LoginPage(self.driver)
         login_result = self.loginPage.do_login(TestData.USER_NAME, TestData.PASSWORD)
         assert login_result in ('forcelogin', 'workmode'), "Login result is unrecognized"

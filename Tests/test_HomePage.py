@@ -1,12 +1,12 @@
 import time
 
 from Config.config import TestData
-from Pages.HomePage import HomePage
-from Pages.LoginPage import LoginPage
+from PageRepository.PageMethods.HomePage import HomePage
+from PageRepository.PageMethods.LoginPage import LoginPage
 from Tests.test_base import BaseTest
 
 
-class Test_Home(BaseTest):
+class TestHome(BaseTest):
 
     def test_home_page_title(self):
         self.loginPage = LoginPage(self.driver)
